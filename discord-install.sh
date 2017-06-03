@@ -5,8 +5,8 @@
 # Dependencies: Required: 'wget'; Optional: 'dialog' (discord-install GUI)
 # Description: A script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown.
 
-DDVER="0.0.4"
-X="v0.0.4 - Removed update checking completely in favor of running script remotely so that it's always up to date."
+DDVER="0.0.5"
+X="v0.0.5 - Added option to remove discord-install alias if it was already added."
 SCRIPTNAME="$0"
 
 programisinstalled () { # check if inputted program is installed using 'type'
@@ -64,7 +64,7 @@ start () { # starting options; option chosen is routed to main function which gi
     programisinstalled "dialog"
     if [ -f ~/.discord-install_alias ]; then
         if [ "$return" = "1" ]; then
-            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 4 Exit)
+            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Remove discord-install alias" 4 Exit)
             main "$MAINCHOICE"
             exit 0
         else
@@ -72,6 +72,7 @@ start () { # starting options; option chosen is routed to main function which gi
             echo "What would you like to do?"
             echo "1 - Install Discord"
             echo "2 - Uninstall Discord"
+            echo "3 - Remove discord-install alias"
             echo "4 - Exit script"
             read -p "Choice? " -r
             echo
@@ -615,7 +616,21 @@ main () { # main function that contains options and questions related to the opt
             start
             ;;
         3)
-            addalias
+            if [ -f ~/.discord-install_alias ]; then
+                read -p "Would you like to remove the discord-install alias file? Y/N "
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    rm -f ~/.discord-install_alias
+                    read -n 1 -s -p "discord-install alias file removed; press any key to continue."
+                    clear
+                    start
+                else
+                    read -n 1 -s -p "discord-install alias file was not removed; press any key to continue."
+                    clear
+                    start
+                fi
+            else
+                addalias
+            fi
             ;;
         4)
             clear
