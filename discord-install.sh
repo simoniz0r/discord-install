@@ -62,6 +62,7 @@ EOL
 }
 
 addalias () {
+    clear
     echo "An alias will be added to your bashrc and zshrc (if it exists) that will allow you to remotely execute discord-install by simply running 'discord-install' in your terminal."
     read -p "Would you like to continue? Y/N "
     if [[ $REPLY =~ ^[Yy]$ ]];then
@@ -77,6 +78,8 @@ addalias () {
         fi
         if grep -q -a 'discord-install' ~/.bashrc; then
             echo "discord-install alias already added to .bashrc!"
+            clear
+            start
         else
             loadalias ".bashrc"
             wget -O ~/.discord-install_alias "https://raw.githubusercontent.com/simoniz0r/discord-install/master/.discord-install_alias"
@@ -97,22 +100,39 @@ addalias () {
 start () { # starting options; option chosen is routed to main function which gives more options, detects errors, etc, and then routes to other functions based on optios chosen
     programisinstalled "dialog"
     if [ "$SCRIPTNAME" = "bash" ]; then
-        if [ "$return" = "1" ]; then
-            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Add alias for discord-install" 4 Exit)
-            main "$MAINCHOICE"
-            exit 0
+        if [ -f ~/.discord-install_alias ]; then
+            if [ "$return" = "1" ]; then
+                MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 4 Exit)
+                main "$MAINCHOICE"
+                exit 0
+            else
+                echo "Welcome to discord-install v$DDVER"
+                echo "What would you like to do?"
+                echo "1 - Install Discord"
+                echo "2 - Uninstall Discord"
+                echo "4 - Exit script"
+                read -p "Choice? " -r
+                echo
+                clear
+                main "$REPLY"
+            fi
         else
-            echo "Welcome to discord-install v$DDVER"
-            echo "What would you like to do?"
-            echo "1 - Install Discord"
-            echo "2 - Uninstall Discord"
-            echo "3 - Add alias for discord-install"
-            echo "4 - Exit script"
-            read -p "Choice? " -r
-            echo
-            clear
-            main "$REPLY"
-        fi
+            if [ "$return" = "1" ]; then
+                MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Add alias for discord-install" 4 Exit)
+                main "$MAINCHOICE"
+                exit 0
+            else
+                echo "Welcome to discord-install v$DDVER"
+                echo "What would you like to do?"
+                echo "1 - Install Discord"
+                echo "2 - Uninstall Discord"
+                echo "3 - Add alias for discord-install"
+                echo "4 - Exit script"
+                read -p "Choice? " -r
+                echo
+                clear
+                main "$REPLY"
+            fi
     else
         if [ "$return" = "1" ]; then
             MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Update discord-install" 4 Exit)
