@@ -5,13 +5,8 @@
 # Dependencies: Required: 'wget'; Optional: 'dialog' (discord-install GUI)
 # Description: A script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown.
 
-<<<<<<< HEAD
 DDVER="0.0.4"
 X="v0.0.4 - Removed update checking completely in favor of running script remotely so that it's always up to date."
-=======
-DDVER="0.0.3"
-X="v0.0.3 - Added option to add alias for remotely executing discord-install."
->>>>>>> 571c067748a776bc591de0607e465c020eacfa84
 SCRIPTNAME="$0"
 
 programisinstalled () { # check if inputted program is installed using 'type'
