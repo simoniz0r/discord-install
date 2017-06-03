@@ -617,6 +617,7 @@ main () { # main function that contains options and questions related to the opt
             ;;
         3)
             if [ -f ~/.discord-install_alias ]; then
+                clear
                 read -p "Would you like to remove the discord-install alias file? Y/N "
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                     rm -f ~/.discord-install_alias
