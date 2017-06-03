@@ -54,7 +54,7 @@ addalias () {
             fi
         fi
     else
-        echo "discord-install alias was not added!"
+        read -n 1 -s -p "discord-install alias was not added; press any key to continue."
         clear
         start
     fi
