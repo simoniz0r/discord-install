@@ -9,7 +9,6 @@ DDVER="0.0.2"
 X="v0.0.2 - Removed option to update discord-install.sh if ran remotely through 'bash -c'."
 # ^^ Remember to update these every release; do not move their line position (eliminate version.txt eventually)!
 SCRIPTNAME="$0"
-DICONF="$(sed -n '1p' ~/.config/discord-install/discord-install.conf)"
 
 programisinstalled () { # check if inputted program is installed using 'type'
     return=1
@@ -53,6 +52,7 @@ updatecheck () { # checks for new version of discord-install using 'curl' based 
 }
 
 start () { # starting options; option chosen is routed to main function which gives more options, detects errors, etc, and then routes to other functions based on optios chosen
+    DICONF="$(sed -n '1p' ~/.config/discord-install/discord-install.conf)"
     programisinstalled "dialog"
     if [ "$DICONF" = "bash" ]; then
         if [ "$return" = "1" ]; then
