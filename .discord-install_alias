@@ -1,0 +1,1 @@
+alias discord-install='bash -c "$(wget --quiet https://github.com/simoniz0r/discord-install/raw/master/discord-install.sh -O -)"'

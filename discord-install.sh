@@ -5,8 +5,8 @@
 # Dependencies: Required: 'wget'; Optional: 'dialog' (discord-install GUI)
 # Description: A script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown.
 
-DDVER="0.0.2"
-X="v0.0.2 - Removed option to update discord-install.sh if ran remotely through 'bash -c'."
+DDVER="0.0.3"
+X="v0.0.3 - Added option to add alias for remotely executing discord-install."
 # ^^ Remember to update these every release; do not move their line position (eliminate version.txt eventually)!
 SCRIPTNAME="$0"
 
@@ -51,11 +51,54 @@ updatecheck () { # checks for new version of discord-install using 'curl' based 
     fi
 }
 
+loadalias () {
+cat >>~/$1 <<EOL
+
+
+if [ -f ~/.discord-install_alias ]; then
+    . ~/.discord-install_alias
+fi
+EOL
+}
+
+addalias () {
+    echo "An alias will be added to your bashrc and zshrc (if it exists) that will allow you to remotely execute discord-install by simply running 'discord-install' in your terminal."
+    read -p "Would you like to continue? Y/N "
+    if [[ $REPLY =~ ^[Yy]$ ]];then
+        if [ -f ~/.zshrc ]; then
+            if grep -q -a 'discord-install' ~/.zshrc; then
+                echo "discord-install alias already added to .zshrc!"
+            else
+                loadalias ".zshrc"
+                if grep -q -a 'discord-install' ~/.zshrc; then
+                    echo "discord-install alias added to ~/.zshrc !"
+                fi
+            fi
+        fi
+        if grep -q -a 'discord-install' ~/.bashrc; then
+            echo "discord-install alias already added to .bashrc!"
+        else
+            loadalias ".bashrc"
+            wget -O ~/.discord-install_alias "https://raw.githubusercontent.com/simoniz0r/discord-install/master/.discord-install_alias"
+            if grep -q -a 'discord-install' ~/.bashrc && [ -f ~/.discord-install_alias ]; then
+                echo "discord-install alias added to ~/.bashrc !"
+                echo "You can now run discord-install  by executing 'discord-install' in your terminal."
+                $SHELL
+                exit 0
+            fi
+        fi
+    else
+        echo "discord-install alias was not added!"
+        clear
+        start
+    fi
+}
+
 start () { # starting options; option chosen is routed to main function which gives more options, detects errors, etc, and then routes to other functions based on optios chosen
     programisinstalled "dialog"
     if [ "$SCRIPTNAME" = "bash" ]; then
         if [ "$return" = "1" ]; then
-            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 4 Exit)
+            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Add alias for discord-install" 4 Exit)
             main "$MAINCHOICE"
             exit 0
         else
@@ -63,6 +106,7 @@ start () { # starting options; option chosen is routed to main function which gi
             echo "What would you like to do?"
             echo "1 - Install Discord"
             echo "2 - Uninstall Discord"
+            echo "3 - Add alias for discord-install"
             echo "4 - Exit script"
             read -p "Choice? " -r
             echo
@@ -606,7 +650,11 @@ main () { # main function that contains options and questions related to the opt
             start
             ;;
         3)
-            updatecheck
+            if [ "$SCRIPTNAME" = "bash" ]; then
+                addalias
+            else
+                updatecheck
+            fi
             ;;
         4)
             clear
