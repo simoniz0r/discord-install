@@ -5,10 +5,11 @@
 # Dependencies: Required: 'wget'; Optional: 'dialog' (discord-install GUI)
 # Description: A script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown.
 
-DDVER="0.0.1"
-X="v0.0.1 - First version of discord-install; a trimmed down version of discord-install that only installs Discord."
+DDVER="0.0.2"
+X="v0.0.2 - Removed option to update discord-install.sh if ran remotely through 'bash -c'."
 # ^^ Remember to update these every release; do not move their line position (eliminate version.txt eventually)!
 SCRIPTNAME="$0"
+DICONF="$(sed -n '1p' ~/.config/discord-install/discord-install.conf)"
 
 programisinstalled () { # check if inputted program is installed using 'type'
     return=1
@@ -53,21 +54,39 @@ updatecheck () { # checks for new version of discord-install using 'curl' based 
 
 start () { # starting options; option chosen is routed to main function which gives more options, detects errors, etc, and then routes to other functions based on optios chosen
     programisinstalled "dialog"
-    if [ "$return" = "1" ]; then
-        MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Update discord-install" 4 Exit)
-        main "$MAINCHOICE"
-        exit 0
+    if [ "$DICONF" = "bash" ]; then
+        if [ "$return" = "1" ]; then
+            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 4 Exit)
+            main "$MAINCHOICE"
+            exit 0
+        else
+            echo "Welcome to discord-install v$DDVER"
+            echo "What would you like to do?"
+            echo "1 - Install Discord"
+            echo "2 - Uninstall Discord"
+            echo "4 - Exit script"
+            read -p "Choice? " -r
+            echo
+            clear
+            main "$REPLY"
+        fi
     else
-        echo "Welcome to discord-install v$DDVER"
-        echo "What would you like to do?"
-        echo "1 - Install Discord"
-        echo "2 - Uninstall Discord"
-        echo "3 - Update discord-install"
-        echo "4 - Exit script"
-        read -p "Choice? " -r
-        echo
-        clear
-        main "$REPLY"
+        if [ "$return" = "1" ]; then
+            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Update discord-install" 4 Exit)
+            main "$MAINCHOICE"
+            exit 0
+        else
+            echo "Welcome to discord-install v$DDVER"
+            echo "What would you like to do?"
+            echo "1 - Install Discord"
+            echo "2 - Uninstall Discord"
+            echo "3 - Update discord-install"
+            echo "4 - Exit script"
+            read -p "Choice? " -r
+            echo
+            clear
+            main "$REPLY"
+        fi
     fi
 }
 
