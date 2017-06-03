@@ -31,7 +31,7 @@ addalias () {
     if [[ $REPLY =~ ^[Yy]$ ]];then
         if [ -f ~/.zshrc ]; then
             if grep -q -a 'discord-install' ~/.zshrc; then
-                echo "discord-install alias already added to .zshrc!"
+                echo "discord-install alias already added to .zshrc !"
             else
                 loadalias ".zshrc"
                 if grep -q -a 'discord-install' ~/.zshrc; then
@@ -40,9 +40,11 @@ addalias () {
             fi
         fi
         if grep -q -a 'discord-install' ~/.bashrc; then
-            echo "discord-install alias already added to .bashrc!"
-            clear
-            start
+            echo "discord-install alias already added to .bashrc !"
+            wget -O ~/.discord-install_alias "https://raw.githubusercontent.com/simoniz0r/discord-install/master/.discord-install_alias"
+            echo "You can now run discord-install  by executing 'discord-install' in your terminal."
+            $SHELL
+            exit 0
         else
             loadalias ".bashrc"
             wget -O ~/.discord-install_alias "https://raw.githubusercontent.com/simoniz0r/discord-install/master/.discord-install_alias"
