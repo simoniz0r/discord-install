@@ -447,7 +447,7 @@ uninst () { # Uninstall function; $*INSTDIR is either from the conf file or from
             read -p "Are you sure you want to uninstall Discord? Y/N " -r
             echo
             if [[ $REPLY =~ ^[Nn]$ ]]; then
-                read -n 1 -s -p "DiscordPTB was not uninstalled; press any key to continue." 
+                read -n 1 -s -p "Discord was not uninstalled; press any key to continue." 
                 clear
                 start
             fi
