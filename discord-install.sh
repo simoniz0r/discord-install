@@ -52,7 +52,6 @@ updatecheck () { # checks for new version of discord-install using 'curl' based 
 }
 
 start () { # starting options; option chosen is routed to main function which gives more options, detects errors, etc, and then routes to other functions based on optios chosen
-    DICONF="$(sed -n '1p' ~/.config/discord-install/discord-install.conf)"
     programisinstalled "dialog"
     if [ "$SCRIPTNAME" = "bash" ]; then
         if [ "$return" = "1" ]; then
