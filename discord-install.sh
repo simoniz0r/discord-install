@@ -7,48 +7,11 @@
 
 DDVER="0.0.3"
 X="v0.0.3 - Added option to add alias for remotely executing discord-install."
-# ^^ Remember to update these every release; do not move their line position (eliminate version.txt eventually)!
 SCRIPTNAME="$0"
 
 programisinstalled () { # check if inputted program is installed using 'type'
     return=1
     type "$1" >/dev/null 2>&1 || { return=0; }
-}
-
-updatescript () { # runs updatescript.sh from github repo
-    bash -c "$(wget -q "https://raw.githubusercontent.com/simoniz0r/discord-install/master/diupdatescript.sh" -O -)" 
-}
-
-updatecheck () { # checks for new version of discord-install using 'curl' based on $DDVER in the script vs $DDVER in version.txt on github; runs updatescript if there is a new version
-    clear
-    echo "Checking for new version..."
-    UPNOTES="$(wget -q "https://raw.githubusercontent.com/simoniz0r/discord-install/master/discord-install.sh" -O - | sed -n '9p' | tr -d 'X="')"
-    VERTEST="$(wget -q "https://raw.githubusercontent.com/simoniz0r/discord-install/master/discord-install.sh" -O - | sed -n '8p' | tr -d 'DVER="')"
-    if [[ $DDVER < $VERTEST ]]; then
-        echo "Installed version: $DDVER -- Current version: $VERTEST"
-        echo "A new version is available!"
-        echo "$UPNOTES"
-        read -p "Would you like to update? Y/N " -r
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            echo
-            echo "Executing update script..."
-            updatescript
-            exit 0
-        else
-            echo
-            read -n 1 -s -p "discord-install not updated; press any key to continue." 
-            clear
-            start
-        fi
-    else
-        echo "Installed version: $DDVER -- Current version: $VERTEST"
-        echo "$UPNOTES"
-        echo "discord-install is up to date."
-        echo
-        read -n 1 -s -p "Press any key to continue."
-        clear
-        start
-    fi
 }
 
 loadalias () {
@@ -99,43 +62,9 @@ addalias () {
 
 start () { # starting options; option chosen is routed to main function which gives more options, detects errors, etc, and then routes to other functions based on optios chosen
     programisinstalled "dialog"
-    if [ "$SCRIPTNAME" = "bash" ]; then
-        if [ -f ~/.discord-install_alias ]; then
-            if [ "$return" = "1" ]; then
-                MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 4 Exit)
-                main "$MAINCHOICE"
-                exit 0
-            else
-                echo "Welcome to discord-install v$DDVER"
-                echo "What would you like to do?"
-                echo "1 - Install Discord"
-                echo "2 - Uninstall Discord"
-                echo "4 - Exit script"
-                read -p "Choice? " -r
-                echo
-                clear
-                main "$REPLY"
-            fi
-        else
-            if [ "$return" = "1" ]; then
-                MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Add alias for discord-install" 4 Exit)
-                main "$MAINCHOICE"
-                exit 0
-            else
-                echo "Welcome to discord-install v$DDVER"
-                echo "What would you like to do?"
-                echo "1 - Install Discord"
-                echo "2 - Uninstall Discord"
-                echo "3 - Add alias for discord-install"
-                echo "4 - Exit script"
-                read -p "Choice? " -r
-                echo
-                clear
-                main "$REPLY"
-            fi
-    else
+    if [ -f ~/.discord-install_alias ]; then
         if [ "$return" = "1" ]; then
-            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Update discord-install" 4 Exit)
+            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 4 Exit)
             main "$MAINCHOICE"
             exit 0
         else
@@ -143,7 +72,23 @@ start () { # starting options; option chosen is routed to main function which gi
             echo "What would you like to do?"
             echo "1 - Install Discord"
             echo "2 - Uninstall Discord"
-            echo "3 - Update discord-install"
+            echo "4 - Exit script"
+            read -p "Choice? " -r
+            echo
+            clear
+            main "$REPLY"
+        fi
+    else
+        if [ "$return" = "1" ]; then
+            MAINCHOICE=$(dialog --stdout --backtitle discord-install --no-cancel --menu "Welcome to discord-install\nVersion $DDVER\nWhat would you like to do?" 0 0 6 1 "Install Discord" 2 "Uninstall Discord" 3 "Add alias for discord-install" 4 Exit)
+            main "$MAINCHOICE"
+            exit 0
+        else
+            echo "Welcome to discord-install v$DDVER"
+            echo "What would you like to do?"
+            echo "1 - Install Discord"
+            echo "2 - Uninstall Discord"
+            echo "3 - Add alias for discord-install"
             echo "4 - Exit script"
             read -p "Choice? " -r
             echo
@@ -670,11 +615,7 @@ main () { # main function that contains options and questions related to the opt
             start
             ;;
         3)
-            if [ "$SCRIPTNAME" = "bash" ]; then
-                addalias
-            else
-                updatecheck
-            fi
+            addalias
             ;;
         4)
             clear
@@ -694,7 +635,6 @@ if [ "$EUID" -ne 0 ]; then
         if [ ! -d ~/.config/discord-install ];then
             mkdir ~/.config/discord-install
         fi
-        echo "$SCRIPTNAME" > ~/.config/discord-install/discord-install.conf
         start
     else
         echo "wget is not installed!"
