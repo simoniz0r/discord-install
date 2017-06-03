@@ -1,1 +1,2 @@
-# [discorddownloader](http://www.simonizor.gq/discorddownloader)
+# A bash script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown. 
+## A simplified version of [discorddownloader](http://www.simonizor.gq/discorddownloader)
