@@ -5,8 +5,8 @@
 # Dependencies: Required: 'wget'; Optional: 'dialog' (discord-install GUI)
 # Description: A script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown.
 
-DDVER="0.0.5"
-X="v0.0.5 - Added option to remove discord-install alias if it was already added."
+DDVER="0.0.6"
+X="v0.0.6 - Check to see if /opt exists when installing there."
 SCRIPTNAME="$0"
 
 programisinstalled () { # check if inputted program is installed using 'type'
@@ -315,6 +315,11 @@ canaryinst () { # Install function for Canary; $DIR is chosen in the startinst f
     sed -i 's:true:false:g' /tmp/DiscordCanary/discord-canary.desktop
     echo "Moving /tmp/DiscordCanary/ to" "$DIR ..."
     if [[ "$DIR" != /home/* ]]; then
+        if [[ "$DIR" == /opt/* ]]; then
+            if [ ! -d "/opt" ]; then
+                sudo mkdir /opt
+            fi
+        fi
         trap '{ echo ; echo "Keyboard interrupt; cleaning up..." ; rm -f /tmp/discord-linux.tar.gz ; read -n 1 -s -p "DiscordCanary was not installed; press any key to continue." ; clear ; start ; }' INT
         sudo mv /tmp/DiscordCanary/ $DIR/ || { echo "Failed!" ; exit 1 ; }
     else
@@ -362,6 +367,11 @@ ptbinst () { # Install function for PTB; $DIR is chosen in the startinst functio
     sed -i 's:true:false:g' /tmp/DiscordPTB/discord-ptb.desktop
     echo "Moving /tmp/DiscordPTB/ to" "$DIR ..."
     if [[ "$DIR" != /home/* ]]; then
+        if [[ "$DIR" == /opt/* ]]; then
+            if [ ! -d "/opt" ]; then
+                sudo mkdir /opt
+            fi
+        fi
         trap '{ echo ; echo "Keyboard interrupt; cleaning up..." ; rm -f /tmp/discord-linux.tar.gz ; read -n 1 -s -p "DiscordPTB was not installed; press any key to continue." ; clear ; start ; }' INT
         sudo mv /tmp/DiscordPTB/ $DIR/ || { echo "Failed!" ; exit 1 ; }
     else
@@ -409,6 +419,11 @@ stableinst () { # Install function for Stable; $DIR is chosen in the startinst f
     sed -i 's:true:false:g' /tmp/Discord/discord.desktop
     echo "Moving /tmp/Discord/ to" "$DIR ..."
     if [[ "$DIR" != /home/* ]]; then
+        if [[ "$DIR" == /opt/* ]]; then
+            if [ ! -d "/opt" ]; then
+                sudo mkdir /opt
+            fi
+        fi
         trap '{ echo ; echo "Keyboard interrupt; cleaning up..." ; rm -f /tmp/discord-linux.tar.gz ; read -n 1 -s -p "Discord was not installed; press any key to continue." ; clear ; start ; }' INT
         sudo mv /tmp/Discord/ $DIR/ || { echo "Failed!" ; exit 1 ; }
     else
