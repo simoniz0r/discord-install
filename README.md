@@ -1,5 +1,4 @@
 # A bash script that can install, update, and manage all versions of Discord. If you have 'dialog' installed, a GUI will automatically be shown. 
-## A simplified version of [discorddownloader](http://www.simonizor.gq/discorddownloader)
 
 ## discord-install can be executed remotely by running `bash -c "$(wget --quiet https://github.com/simoniz0r/discord-install/raw/master/discord-install.sh -O -)"` in your terminal.
 
